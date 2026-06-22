@@ -2,18 +2,18 @@ name: Test
 on:
   pull_request:
     paths:
-      - ".github/workflows/test.yml"
-      - "package.json"
-      - "index.js"
-      - "lib/**"
-      - "test/**.js"
+      - .github/workflows/test.yml
+      - package.json
+      - index.js
+      - lib/**
+      - test/**.js
   push:
     paths:
-      - ".github/workflows/test.yml"
-      - "package.json"
-      - "index.js"
-      - "lib/**"
-      - "test/**.js"
+      - .github/workflows/test.yml
+      - package.json
+      - index.js
+      - lib/**
+      - test/**.js
 permissions:
   contents: read
 
@@ -24,10 +24,10 @@ jobs:
       fail-fast: false
       matrix:
         node: [14, 16, 18, 20]
-        os: [ubuntu-20.04, ubuntu-22.04]
+        os: [ubuntu-24.04, ubuntu-22.04]
         mongodb: [4.4.28, 5.0.25, 6.0.14, 7.0.7]
         include:
-          - os: ubuntu-20.04 # customize on which matrix the coverage will be collected on
+          - os: ubuntu-24.04 # customize on which matrix the coverage will be collected on
             mongodb: 5.0.25
             node: 16
             coverage: true
@@ -51,7 +51,7 @@ jobs:
 
       - name: Load MongoDB binary cache
         id: cache-mongodb-binaries
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/mongodb-binaries
           key: ${{ matrix.os }}-${{ matrix.mongodb }}
@@ -64,14 +64,14 @@ jobs:
         run: npm run test-coverage
         if: matrix.coverage == true
       - name: Archive code coverage results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: matrix.coverage == true
         with:
           name: coverage
           path: coverage
 
   test-deno:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     name: Deno tests
     env:
       MONGOMS_VERSION: 6.0.14
@@ -85,7 +85,7 @@ jobs:
           node-version: 16
       - name: Load MongoDB binary cache
         id: cache-mongodb-binaries
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/mongodb-binaries
           key: deno-${{ env.MONGOMS_VERSION }}
@@ -101,7 +101,7 @@ jobs:
   test-replica-sets:
     needs:
       - test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     name: Replica Set tests
     env:
       FORCE_COLOR: true
@@ -118,7 +118,7 @@ jobs:
   dependency-review:
     name: Dependency Review
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
